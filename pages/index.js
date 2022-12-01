@@ -15,7 +15,6 @@ export default function Home() {
         <h1 className={styles.title}>Coffee shops</h1>
       </main>
 
-      <footer className={styles.footer}></footer>
     </div>
   );
 }
