@@ -1,6 +1,6 @@
-import styles from "../styles/Banner.module.css";
+import styles from "../styles/card.module.css";
 
-const Banner = ({ buttonText, handleOnClick }) => {
+const Card = ({ buttonText, handleOnClick }) => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>
@@ -17,4 +17,4 @@ const Banner = ({ buttonText, handleOnClick }) => {
   );
 };
 
-export default Banner;
+export default Card;
