@@ -2,6 +2,7 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import Banner from "../components/Banner/banner";
 import Card from "../components/Card/card";
+import coffeeStores from "../data/coffee-stores.json";
 
 export default function Home() {
   const buttonText = "View stores nearby";
@@ -23,7 +24,17 @@ export default function Home() {
           handleOnClick={handleOnBannerBtnClick}
         />
         <div className={styles.cardLayout}>
-          <Card name="Dark coffee" href="/" image="" className={styles.card} />
+          {coffeeStores.map((coffeeStore) => {
+            return (
+              <Card
+                name={coffeeStore.name}
+                href={`/coffee-store/${coffeeStore.id}`}
+                imgUrl={coffeeStore.imgUrl}
+                className={styles.card}
+                key={coffeeStore.id}
+              />
+            );
+          })}
         </div>
       </main>
     </div>
