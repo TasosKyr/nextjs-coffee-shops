@@ -1,19 +1,28 @@
-import styles from "../styles/card.module.css";
+import styles from "./card.module.css";
+import Image from "next/image";
+import Link from "next/link";
+import cls from "classnames"
 
-const Card = ({ buttonText, handleOnClick }) => {
+const Card = ({ name, image, imgUrl }) => {
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>
-        <span className={styles.title1}>Coffee</span>{" "}
-        <span className={styles.title2}>shops</span>
-      </h1>
-      <p className={styles.subtitle}>Discover your local coffee places!</p>
-      <div className={styles.buttonWrapper}>
-        <button className={styles.button} onClick={handleOnClick}>
-          {buttonText}
-        </button>
-      </div>
-    </div>
+    <Link href={imgUrl}>
+      <a className={styles.cardLink}>
+        <div className={cls("glass", styles.container)}>
+          <div className={styles.cardHeaderWrapper}>
+            <h2 className={styles.cardHeader}>{name}</h2>
+          </div>
+          <div className={styles.cardImageWrapper}>
+            <Image
+            className={styles.cardImage}
+              src={image}
+              width={260}
+              height={160}
+              alt={`${name} coffee store image`}
+            />
+          </div>
+        </div>
+      </a>
+    </Link>
   );
 };
 

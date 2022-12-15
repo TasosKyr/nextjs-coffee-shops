@@ -1,13 +1,14 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import Banner from "../components/banner";
+import Banner from "../components/Banner/banner";
+import Card from "../components/Card/card";
 
 export default function Home() {
   const buttonText = "View stores nearby";
 
   const handleOnBannerBtnClick = () => {
-    console.log("banner btn")
-  }
+    console.log("banner btn");
+  };
   return (
     <div className={styles.container}>
       <Head>
@@ -17,7 +18,13 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <Banner buttonText={buttonText} handleOnClick={handleOnBannerBtnClick}/>
+        <Banner
+          buttonText={buttonText}
+          handleOnClick={handleOnBannerBtnClick}
+        />
+        <div className={styles.cardLayout}>
+          <Card name="Dark coffee" href="/" image="" className={styles.card} />
+        </div>
       </main>
     </div>
   );
