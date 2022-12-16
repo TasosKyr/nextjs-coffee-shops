@@ -4,7 +4,15 @@ import Banner from "../components/Banner/banner";
 import Card from "../components/Card/card";
 import coffeeStores from "../data/coffee-stores.json";
 
-export default function Home() {
+export async function getStaticProps(context) {
+  return {
+    props: {
+      coffeeStores,
+    }, // will be passed to the page component as props
+  };
+}
+
+export default function Home(props) {
   const buttonText = "View stores nearby";
 
   const handleOnBannerBtnClick = () => {
@@ -23,19 +31,24 @@ export default function Home() {
           buttonText={buttonText}
           handleOnClick={handleOnBannerBtnClick}
         />
-        <div className={styles.cardLayout}>
-          {coffeeStores.map((coffeeStore) => {
-            return (
-              <Card
-                name={coffeeStore.name}
-                href={`/coffee-store/${coffeeStore.id}`}
-                imgUrl={coffeeStore.imgUrl}
-                className={styles.card}
-                key={coffeeStore.id}
-              />
-            );
-          })}
-        </div>
+        {coffeeStores.length > 0 && (
+          <>
+            <h2 className={styles.heading2}>Berlin Coffee Shops</h2>
+            <div className={styles.cardLayout}>
+              {coffeeStores.map((coffeeStore) => {
+                return (
+                  <Card
+                    name={coffeeStore.name}
+                    href={`/coffee-store/${coffeeStore.id}`}
+                    imgUrl={coffeeStore.imgUrl}
+                    className={styles.card}
+                    key={coffeeStore.id}
+                  />
+                );
+              })}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );
