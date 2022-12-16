@@ -37,10 +37,10 @@ export default function Home({ coffeeStores }) {
                 return (
                   <Card
                     name={coffeeStore.name}
-                    href={`/coffee-store/${coffeeStore.fsq_id}`}
+                    href={`/coffee-store/${coffeeStore.id}`}
                     imgUrl={coffeeStore.imgUrl}
                     className={styles.card}
-                    key={coffeeStore.fsq_id}
+                    key={coffeeStore.id}
                   />
                 );
               })}

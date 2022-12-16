@@ -14,7 +14,7 @@ export async function getStaticProps({ params }) {
   return {
     props: {
       coffeeStore: coffeeStores?.find((coffeeStore) => {
-        return coffeeStore.fsq_id.toString() === params.id;
+        return coffeeStore.id.toString() === params.id;
       }),
     },
   };
@@ -22,14 +22,14 @@ export async function getStaticProps({ params }) {
 
 export async function getStaticPaths() {
   const coffeeStores = await fetchCoffeeStores();
+  console.log({coffeeStores})
   const paths = coffeeStores?.map((el) => {
     return {
       params: {
-        id: el?.fsq_id,
+        id: el?.id,
       },
     };
   });
-
 
   return {
     paths,
@@ -41,8 +41,7 @@ export default function CoffeeStore({ coffeeStore }) {
   const router = useRouter();
   if (router.isFallback) return <div>Loading...</div>;
 
-  const { name, location, imgUrl } = coffeeStore;
-console.log({location})
+  const { name, address, locality, imgUrl } = coffeeStore;
   function handleUpvoteButton() {}
 
   return (
@@ -53,7 +52,7 @@ console.log({location})
       <div className={styles.container}>
         <div className={styles.col1}>
           <div className={styles.backToHomeLink}>
-            <Link href="/">BACK TO HOME</Link>
+            <Link href="/">← BACK TO HOME</Link>
           </div>
           <div className={styles.nameWrapper}>
             <h1 className={styles.name}>{name}</h1>
@@ -72,7 +71,7 @@ console.log({location})
         <div className={cls("glass", styles.col2)}>
           <div className={styles.iconWrapper}>
             <Image src={places} width={24} height={24} alt="location icon" />
-            <p className={styles.text}>{location.formatted_address}</p>
+            <p className={styles.text}>{address}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image
@@ -81,7 +80,7 @@ console.log({location})
               height={24}
               alt="neighborhood icon"
             />
-            <p className={styles.text}>{location.locality}</p>
+            <p className={styles.text}>{locality}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image src={star} width={24} height={24} alt="star icon" />

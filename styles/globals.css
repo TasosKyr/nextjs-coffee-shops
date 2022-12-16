@@ -8,8 +8,7 @@ body {
   background: url("/static/background.png") no-repeat;
   background-position: 50%;
   background-size: cover;
-  height: 100%;
-  color: #373b64
+  color: #373b64;
 }
 
 a {
