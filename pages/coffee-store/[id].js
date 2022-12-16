@@ -2,31 +2,34 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
-import coffeeStores from "../../data/coffee-stores.json";
 import styles from "../../styles/coffee-store.module.css";
 import nearMe from "../../public/static/icons/nearMe.svg";
 import places from "../../public/static/icons/places.svg";
 import star from "../../public/static/icons/star.svg";
 import cls from "classnames";
+import { fetchCoffeeStores } from "../../lib/coffee-stores";
 
-export function getStaticProps({ params }) {
+export async function getStaticProps({ params }) {
+  const coffeeStores = await fetchCoffeeStores();
   return {
     props: {
-      coffeeStore: coffeeStores.find((coffeeStore) => {
-        return coffeeStore.id.toString() === params.id;
+      coffeeStore: coffeeStores?.find((coffeeStore) => {
+        return coffeeStore.fsq_id.toString() === params.id;
       }),
     },
   };
 }
 
-export function getStaticPaths() {
-  const paths = coffeeStores.map((el) => {
+export async function getStaticPaths() {
+  const coffeeStores = await fetchCoffeeStores();
+  const paths = coffeeStores?.map((el) => {
     return {
       params: {
-        id: el.id.toString(),
+        id: el?.fsq_id,
       },
     };
   });
+
 
   return {
     paths,
@@ -38,8 +41,8 @@ export default function CoffeeStore({ coffeeStore }) {
   const router = useRouter();
   if (router.isFallback) return <div>Loading...</div>;
 
-  const { name, address, neighborhood, imgUrl } = coffeeStore;
-
+  const { name, location, imgUrl } = coffeeStore;
+console.log({location})
   function handleUpvoteButton() {}
 
   return (
@@ -57,7 +60,8 @@ export default function CoffeeStore({ coffeeStore }) {
           </div>
           <div className={styles.storeImgWrapper}>
             <Image
-              src={imgUrl}
+              src={imgUrl ||
+                "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"}
               width={600}
               height={360}
               className={styles.storeImg}
@@ -68,7 +72,7 @@ export default function CoffeeStore({ coffeeStore }) {
         <div className={cls("glass", styles.col2)}>
           <div className={styles.iconWrapper}>
             <Image src={places} width={24} height={24} alt="location icon" />
-            <p className={styles.text}>{address}</p>
+            <p className={styles.text}>{location.formatted_address}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image
@@ -77,7 +81,7 @@ export default function CoffeeStore({ coffeeStore }) {
               height={24}
               alt="neighborhood icon"
             />
-            <p className={styles.text}>{neighborhood}</p>
+            <p className={styles.text}>{location.locality}</p>
           </div>
           <div className={styles.iconWrapper}>
             <Image src={star} width={24} height={24} alt="star icon" />

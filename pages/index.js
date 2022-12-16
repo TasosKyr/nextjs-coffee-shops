@@ -2,17 +2,15 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import Banner from "../components/Banner/banner";
 import Card from "../components/Card/card";
-import coffeeStores from "../data/coffee-stores.json";
+import { fetchCoffeeStores } from "../lib/coffee-stores";
 
 export async function getStaticProps(context) {
-  return {
-    props: {
-      coffeeStores,
-    }, // will be passed to the page component as props
-  };
+  const coffeeStores = await fetchCoffeeStores();
+
+  return { props: { coffeeStores } };
 }
 
-export default function Home(props) {
+export default function Home({ coffeeStores }) {
   const buttonText = "View stores nearby";
 
   const handleOnBannerBtnClick = () => {
@@ -39,10 +37,10 @@ export default function Home(props) {
                 return (
                   <Card
                     name={coffeeStore.name}
-                    href={`/coffee-store/${coffeeStore.id}`}
+                    href={`/coffee-store/${coffeeStore.fsq_id}`}
                     imgUrl={coffeeStore.imgUrl}
                     className={styles.card}
-                    key={coffeeStore.id}
+                    key={coffeeStore.fsq_id}
                   />
                 );
               })}
