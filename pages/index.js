@@ -3,6 +3,7 @@ import styles from "../styles/Home.module.css";
 import Banner from "../components/Banner/banner";
 import Card from "../components/Card/card";
 import { fetchCoffeeStores } from "../lib/coffee-stores";
+import useTrackLocation from "../hooks/useTrackLocation";
 
 export async function getStaticProps(context) {
   const coffeeStores = await fetchCoffeeStores();
@@ -13,9 +14,15 @@ export async function getStaticProps(context) {
 export default function Home({ coffeeStores }) {
   const buttonText = "View stores nearby";
 
+  const { latLong, handleTrackLocation, locationErrorMsg, isFindingLocation } =
+    useTrackLocation();
+
+  console.log({ isFindingLocation, latLong });
+
   const handleOnBannerBtnClick = () => {
-    console.log("banner btn");
+    handleTrackLocation();
   };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -26,27 +33,30 @@ export default function Home({ coffeeStores }) {
 
       <main className={styles.main}>
         <Banner
-          buttonText={buttonText}
+          buttonText={isFindingLocation ? "Finding..." : buttonText}
           handleOnClick={handleOnBannerBtnClick}
         />
-        {coffeeStores.length > 0 && (
-          <>
-            <h2 className={styles.heading2}>Berlin Coffee Shops</h2>
-            <div className={styles.cardLayout}>
-              {coffeeStores.map((coffeeStore) => {
-                return (
-                  <Card
-                    name={coffeeStore.name}
-                    href={`/coffee-store/${coffeeStore.id}`}
-                    imgUrl={coffeeStore.imgUrl}
-                    className={styles.card}
-                    key={coffeeStore.id}
-                  />
-                );
-              })}
-            </div>
-          </>
-        )}
+        {locationErrorMsg && <p>Something went wrong: {locationErrorMsg}</p>}
+        <div className={styles.sectionWrapper}>
+          {coffeeStores.length > 0 && (
+            <>
+              <h2 className={styles.heading2}>Berlin Coffee Shops</h2>
+              <div className={styles.cardLayout}>
+                {coffeeStores.map((coffeeStore) => {
+                  return (
+                    <Card
+                      name={coffeeStore.name}
+                      href={`/coffee-store/${coffeeStore.id}`}
+                      imgUrl={coffeeStore.imgUrl}
+                      className={styles.card}
+                      key={coffeeStore.id}
+                    />
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
       </main>
     </div>
   );
