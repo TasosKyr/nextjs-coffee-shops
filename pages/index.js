@@ -5,7 +5,7 @@ import Card from "../components/Card/card";
 import { fetchCoffeeStores } from "../lib/coffee-stores";
 import useTrackLocation from "../hooks/useTrackLocation";
 import { useEffect, useState, useContext } from "react";
-import { ACTION_TYPES, StoreContext } from "../pages/_app";
+import { ACTION_TYPES, StoreContext } from "../store/store-context";
 
 export async function getStaticProps(context) {
   const berlinCoffeeStores = await fetchCoffeeStores();

@@ -9,7 +9,7 @@ import places from "../../public/static/icons/places.svg";
 import star from "../../public/static/icons/star.svg";
 import cls from "classnames";
 import { fetchCoffeeStores } from "../../lib/coffee-stores";
-import { StoreContext } from "../_app";
+import { StoreContext } from "../../store/store-context";
 import { isEmpty } from "../../utils";
 
 export async function getStaticProps({ params }) {
