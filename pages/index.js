@@ -17,10 +17,7 @@ export default function Home({ berlinCoffeeStores }) {
   const buttonText = "View stores nearby";
   const [error, setError] = useState(null);
 
-  const {
-    dispatch,
-    state,
-  } = useContext(StoreContext);
+  const { dispatch, state } = useContext(StoreContext);
 
   const { localCoffeeStores, latLong } = state;
 
@@ -31,13 +28,16 @@ export default function Home({ berlinCoffeeStores }) {
     async function setCoffeeStoresByLocation() {
       if (latLong) {
         try {
-          const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 30);
+          const response = await fetch(
+            `api/getLocalCoffeeShops?latLong=${latLong}&limit=30`
+          );
+          const localCoffeeStores = await response.json();
 
           dispatch({
             type: ACTION_TYPES.SET_COFFEE_STORES,
-            payload: { localCoffeeStores: fetchedCoffeeStores },
+            payload: { localCoffeeStores },
           });
-          
+          setError("");
         } catch (error) {
           console.log(error);
           setError(error.message);
