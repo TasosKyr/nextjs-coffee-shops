@@ -4,20 +4,48 @@ import Banner from "../components/Banner/banner";
 import Card from "../components/Card/card";
 import { fetchCoffeeStores } from "../lib/coffee-stores";
 import useTrackLocation from "../hooks/useTrackLocation";
+import { useEffect, useState, useContext } from "react";
+import { ACTION_TYPES, StoreContext } from "../pages/_app";
 
 export async function getStaticProps(context) {
-  const coffeeStores = await fetchCoffeeStores();
+  const berlinCoffeeStores = await fetchCoffeeStores();
 
-  return { props: { coffeeStores } };
+  return { props: { berlinCoffeeStores } };
 }
 
-export default function Home({ coffeeStores }) {
+export default function Home({ berlinCoffeeStores }) {
   const buttonText = "View stores nearby";
+  const [error, setError] = useState(null);
 
-  const { latLong, handleTrackLocation, locationErrorMsg, isFindingLocation } =
+  const {
+    dispatch,
+    state,
+  } = useContext(StoreContext);
+
+  const { localCoffeeStores, latLong } = state;
+
+  const { handleTrackLocation, locationErrorMsg, isFindingLocation } =
     useTrackLocation();
 
-  console.log({ isFindingLocation, latLong });
+  useEffect(() => {
+    async function setCoffeeStoresByLocation() {
+      if (latLong) {
+        try {
+          const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 30);
+
+          dispatch({
+            type: ACTION_TYPES.SET_COFFEE_STORES,
+            payload: { localCoffeeStores: fetchedCoffeeStores },
+          });
+          
+        } catch (error) {
+          console.log(error);
+          setError(error.message);
+        }
+      }
+    }
+    setCoffeeStoresByLocation();
+  }, [latLong]);
 
   const handleOnBannerBtnClick = () => {
     handleTrackLocation();
@@ -37,26 +65,45 @@ export default function Home({ coffeeStores }) {
           handleOnClick={handleOnBannerBtnClick}
         />
         {locationErrorMsg && <p>Something went wrong: {locationErrorMsg}</p>}
-        <div className={styles.sectionWrapper}>
-          {coffeeStores.length > 0 && (
-            <>
-              <h2 className={styles.heading2}>Berlin Coffee Shops</h2>
-              <div className={styles.cardLayout}>
-                {coffeeStores.map((coffeeStore) => {
-                  return (
-                    <Card
-                      name={coffeeStore.name}
-                      href={`/coffee-store/${coffeeStore.id}`}
-                      imgUrl={coffeeStore.imgUrl}
-                      className={styles.card}
-                      key={coffeeStore.id}
-                    />
-                  );
-                })}
-              </div>
-            </>
-          )}
-        </div>
+        {error && <p>Something went wrong: {error}</p>}
+
+        {localCoffeeStores?.length > 0 && (
+          <div className={styles.sectionWrapper}>
+            <h2 className={styles.heading2}>Coffee Shops near me</h2>
+            <div className={styles.cardLayout}>
+              {localCoffeeStores.map((coffeeStore) => {
+                return (
+                  <Card
+                    name={coffeeStore.name}
+                    href={`/coffee-store/${coffeeStore.id}`}
+                    imgUrl={coffeeStore.imgUrl}
+                    className={styles.card}
+                    key={coffeeStore.id}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {berlinCoffeeStores?.length > 0 && (
+          <div className={styles.sectionWrapper}>
+            <h2 className={styles.heading2}>Berlin Coffee Shops</h2>
+            <div className={styles.cardLayout}>
+              {berlinCoffeeStores.map((coffeeStore) => {
+                return (
+                  <Card
+                    name={coffeeStore.name}
+                    href={`/coffee-store/${coffeeStore.id}`}
+                    imgUrl={coffeeStore.imgUrl}
+                    className={styles.card}
+                    key={coffeeStore.id}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

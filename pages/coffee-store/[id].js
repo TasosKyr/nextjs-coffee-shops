@@ -11,18 +11,18 @@ import { fetchCoffeeStores } from "../../lib/coffee-stores";
 
 export async function getStaticProps({ params }) {
   const coffeeStores = await fetchCoffeeStores();
+  const findCoffeeStoreById = coffeeStores?.find((coffeeStore) => {
+    return coffeeStore.id.toString() === params.id;
+  });
   return {
     props: {
-      coffeeStore: coffeeStores?.find((coffeeStore) => {
-        return coffeeStore.id.toString() === params.id;
-      }),
+      coffeeStore: findCoffeeStoreById || {},
     },
   };
 }
 
 export async function getStaticPaths() {
   const coffeeStores = await fetchCoffeeStores();
-  console.log({coffeeStores})
   const paths = coffeeStores?.map((el) => {
     return {
       params: {
@@ -59,8 +59,10 @@ export default function CoffeeStore({ coffeeStore }) {
           </div>
           <div className={styles.storeImgWrapper}>
             <Image
-              src={imgUrl ||
-                "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"}
+              src={
+                imgUrl ||
+                "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
+              }
               width={600}
               height={360}
               className={styles.storeImg}
