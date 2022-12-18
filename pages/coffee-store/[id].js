@@ -1,3 +1,4 @@
+import { useContext, useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
@@ -8,6 +9,8 @@ import places from "../../public/static/icons/places.svg";
 import star from "../../public/static/icons/star.svg";
 import cls from "classnames";
 import { fetchCoffeeStores } from "../../lib/coffee-stores";
+import { StoreContext } from "../_app";
+import { isEmpty } from "../../utils";
 
 export async function getStaticProps({ params }) {
   const coffeeStores = await fetchCoffeeStores();
@@ -16,7 +19,7 @@ export async function getStaticProps({ params }) {
   });
   return {
     props: {
-      coffeeStore: findCoffeeStoreById || {},
+      initialCoffeeStore: findCoffeeStoreById || {},
     },
   };
 }
@@ -37,9 +40,28 @@ export async function getStaticPaths() {
   };
 }
 
-export default function CoffeeStore({ coffeeStore }) {
+export default function CoffeeStore({ initialCoffeeStore }) {
   const router = useRouter();
-  if (router.isFallback) return <div>Loading...</div>;
+  const id = router.query.id;
+  const [coffeeStore, setCoffeeStore] = useState(initialCoffeeStore);
+  const {
+    state: { localCoffeeStores },
+  } = useContext(StoreContext);
+
+  useEffect(() => {
+    if (isEmpty(initialCoffeeStore)) {
+      if (localCoffeeStores?.length > 0) {
+        const findCoffeeStoreById = localCoffeeStores?.find((el) => {
+          return el.id.toString() === id;
+        });
+        setCoffeeStore(findCoffeeStoreById);
+      }
+    }
+  }, [id]);
+
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
 
   const { name, address, locality, imgUrl } = coffeeStore;
   function handleUpvoteButton() {}
